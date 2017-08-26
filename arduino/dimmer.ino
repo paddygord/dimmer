@@ -2,8 +2,9 @@ unsigned char channel_0 = 7;
 unsigned char channel_1 = 6;
 unsigned char dimming_0 = 0;
 unsigned char dimming_1 = 0;
+unsigned char buf[3] = {0, 0};
 void zero_cross() {
-    delayMicroseconds(100 * constrain(dimming_0, 5, 85));
+    delayMicroseconds(100 * constrain(dimming_0, 10, 85));
     digitalWrite(channel_0, HIGH);
     digitalWrite(channel_1, HIGH);
     delayMicroseconds(10);
@@ -17,18 +18,21 @@ void setup() {
     attachInterrupt(digitalPinToInterrupt(3), zero_cross, RISING);
 }
 void loop() {
-    unsigned char buf[3];
-    if (Serial.available() < sizeof(buf))
+    while (Serial.peek() != 116) {
+        Serial.read();
         return;
-    int num = Serial.readBytesUntil(127, buf, sizeof(buf));
-    if (num != sizeof(buf))
+    }
+    while (Serial.available() < sizeof(buf)) {
         return;
-    if (buf[0] > 100 || buf[1] > 100)
+    }
+    if (Serial.readBytes(buf, sizeof(buf)) != sizeof(buf))
         return;
-    dimming_0 = buf[0];
-    dimming_1 = buf[1];
-    Serial.print(buf[0]);
+    if (buf[1] > 100 || buf[2] > 100)
+        return;
+    dimming_0 = buf[1];
+    dimming_1 = buf[2];
+    Serial.print(buf[1]);
     Serial.print(' ');
-    Serial.println(buf[1]);
+    Serial.println(buf[2]);
     //dimming_0 = 50 + 50 * sin((float)millis() / 1000);
 }
