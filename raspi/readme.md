@@ -1,14 +1,14 @@
-# Arduino Fairy Light Controller
+# Raspberry Pi Fairy Light Controller
 
 ## Dependencies
 
+`sudo` is required for accessing the GPIO pins, so rpi.gpio has to be installed as root too
 ```
 sudo apt install python3 python3-pip
-pip3 install rpi.gpio
+sudo pip3 install rpi.gpio
 ```
-## Build/Upload
+## Run
 
 ```
-cd arduino
-make
+sudo python3 dimmer.py
 ```
