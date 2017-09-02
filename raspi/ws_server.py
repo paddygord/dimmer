@@ -5,17 +5,13 @@ import parse
 import struct
 import mmap
 f = open('ui_file', 'a+b')
-m = mmap.mmap(f.fileno(), 0)
+m = mmap.mmap(f.fileno(), 16)
 
 async def consumer_handler(websocket, path):
     while True:
         message = await websocket.recv()
-        u = parse.parse("{:g} {:g} {:g} {:g}", message)
-        if u is not None:
-            b0, b1, x, y = u
-            print(b0, b1, x, y)
-            m.seek(0)
-            m.write(bytes(struct.pack('ffff', b0, b1, x, y)))
+        m.seek(0)
+        m.write(message)
 
 start_server = websockets.serve(consumer_handler, 'raspberrypi.local', 5678)
 

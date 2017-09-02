@@ -15,7 +15,7 @@ gpio.setup(sync, gpio.IN)
 import struct
 import mmap
 f = open('ui_file', 'a+b')
-m = mmap.mmap(f.fileno(), 16)
+mm = mmap.mmap(f.fileno(), 16)
 
 
 try:
@@ -26,11 +26,13 @@ try:
 
         value0 = 0.5 + 0.5 * math.sin(datetime.now().timestamp())
 
-        m.seek(0)
-        b0, b1, x, y = struct.unpack('ffff', m)
-        #value0 = b
+        mm.seek(0)
+        b, c, m, w = struct.unpack('ffff', mm)
+        print(b, c, m, w)
+        value0 = b
         value0 = 1 - value0
         value0 = min(max(value0, 0.1), 1)
+        continue
         sleep(0.01 * value0)
         gpio.output(ch0, gpio.HIGH)
         gpio.output(ch1, gpio.HIGH)
