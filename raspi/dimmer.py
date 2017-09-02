@@ -11,16 +11,26 @@ sync = 4
 gpio.setup((ch0, ch1), gpio.OUT, initial=gpio.LOW)
 gpio.setup(sync, gpio.IN)
 
+
+import struct
+import mmap
+f = open('ui_file', 'a+b')
+m = mmap.mmap(f.fileno(), 16)
+
+
 try:
     while True:
         if gpio.wait_for_edge(sync, gpio.RISING, timeout=30) is None:
             print('timeout!')
             continue
+
         value0 = 0.5 + 0.5 * math.sin(datetime.now().timestamp())
-        value0 *= 1
+
+        m.seek(0)
+        b0, b1, x, y = struct.unpack('ffff', m)
+        #value0 = b
         value0 = 1 - value0
         value0 = min(max(value0, 0.1), 1)
-        print(value0)
         sleep(0.01 * value0)
         gpio.output(ch0, gpio.HIGH)
         gpio.output(ch1, gpio.HIGH)

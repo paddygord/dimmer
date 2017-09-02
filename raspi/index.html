@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Fairy Light Controller</title>
+    </head>
+    <body>
+        <form id="controller">
+            <label>brightness
+                <input name="brightness0" type="range" min="0" max="1" step="0.001">
+            </label>
+            <br/>
+            <label>brightness
+                <input name="brightness1" type="range" min="0" max="1" step="0.001">
+            </label>
+        </form>
+        <script>
+            ws = new WebSocket("ws://raspberrypi.local:5678/")
+            ws.onerror = function(e) {
+                ws = new WebSocket("ws://192.168.1.76:5678/")
+                ws.onerror = function(e) {
+                    document.open();
+                    document.write("<h1>error</h1>");
+                    document.close();
+                }
+            }
+            /*messages = document.createElement('ul');
+            ws.onmessage = function (event) {
+                var messages = document.getElementsByTagName('ul')[0],
+                    message = document.createElement('li'),
+                    content = document.createTextNode(event.data);
+                message.appendChild(content);
+                messages.appendChild(message);
+            };*/
+
+            var mouse_x
+            var mouse_y
+            window.addEventListener('mousemove', function(e){
+                mouse_x = e.screenX / 1920;
+                mouse_y = e.screenY / 1200;
+                ws.send("" + brightness0.value + " " + brightness1.value + " " + mouse_x + " " + mouse_y)
+            })
+
+            var brightness0 = document.getElementById("controller").elements["brightness0"]
+            brightness0.addEventListener('input', function(e) {
+                ws.send("" + brightness0.value + " " + brightness1.value + " " + mouse_x + " " + mouse_y)
+            });
+            var brightness1 = document.getElementById("controller").elements["brightness1"]
+            brightness1.addEventListener('input', function(e) {
+                ws.send("" + brightness0.value + " " + brightness1.value + " " + mouse_x + " " + mouse_y)
+            });
+        </script>
+    </body>
+</html>
+        </script>
+    </body>
+</html>
