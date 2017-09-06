@@ -3,5 +3,3 @@ python3 ws_server.py &
 python3 dimmer.py &
 
 wait
-
-trap 'killall background' SIGINT SIGTERM EXIT
