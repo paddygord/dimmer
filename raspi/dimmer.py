@@ -12,7 +12,7 @@ gpio.setup(sync, gpio.IN)
 import struct
 import mmap
 f = open('ui_file', 'a+b')
-mm = mmap.mmap(f.fileno(), 16)
+mm = mmap.mmap(f.fileno(), 20)
 
 
 import math
@@ -46,9 +46,8 @@ try:
                 gpio.output(ch0, gpio.LOW)
 
             mm.seek(0)
-            b, c, m, w = struct.unpack('ffff', mm)
+            b, c, m, w, s = struct.unpack('fffff', mm)
 
-            time = time + 0.02
             phase_offset = c * 0.5
             #hz0 = 5 + 20 * (0.5 + 0.5 * math.sin(2 * math.pi * (         0.0 + time / 60)))
             #hz1 = 5 + 20 * (0.5 + 0.5 * math.sin(2 * math.pi * (phase_offset + time / 60)))
@@ -57,17 +56,22 @@ try:
             #waves0 =        0.5 + 0.5 * math.sin(2 * math.pi * (         0.0 + phase0))
             #waves1 =        0.5 + 0.5 * math.sin(2 * math.pi * (phase_offset + phase1))
 
-            #value0 = (1 - waves0 * w) * b
-            #value1 = (1 - waves1 * w) * b
+            hz = 2 + (1 - s) * 5
+            time += 0.02 / hz
+            waves0 = 0.5 + 0.5 * math.sin(2 * math.pi * (         0.0 + time))
+            waves1 = 0.5 + 0.5 * math.sin(2 * math.pi * (phase_offset + time))
 
-            p = 3
-            value0 = (p - abs(time % (2 * p) - p)) / p
+            value0 = (1 - waves0 * w) * b
+            value1 = (1 - waves1 * w) * b
+
+            #p = 3
+            #value0 = (p - abs(time % (2 * p) - p)) / p
             #value0 = 1 - math.modf(time / 3)[0]
-            value0 *= b
-            value1 = 1 - math.modf(phase_offset + time / 3)[0]
-            value1 *= b
+            #value0 *= b
+            #value1 = 1 - math.modf(phase_offset + time / 3)[0]
+            #value1 *= b
 
-            value0 = 0.15 + 0.75 * min(max(1 - math.pow(value0, 2.5), 0), 1)
-            value1 = 0.15 + 0.75 * min(max(1 - math.pow(value1, 2.5), 0), 1)
+            value0 = 0.15 + 0.75 * min(max(1 - math.pow(value0, 2.75), 0), 1)
+            value1 = 0.15 + 0.75 * min(max(1 - math.pow(value1, 2.75), 0), 1)
 finally:
     gpio.cleanup()

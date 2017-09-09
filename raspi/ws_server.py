@@ -5,7 +5,7 @@ import parse
 import struct
 import mmap
 f = open('ui_file', 'a+b')
-m = mmap.mmap(f.fileno(), 16)
+m = mmap.mmap(f.fileno(), 20)
 
 async def consumer_handler(websocket, path):
     while True:

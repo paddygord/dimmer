@@ -28,6 +28,9 @@
                 margin-bottom: 20px;
                 float: left;
             }
+            .disabled {
+                display: none;
+            }
         </style>
     </head>
     <body>
@@ -39,11 +42,14 @@
             <label>crossfade
                 <input name='crossfade' type='range' min='0' max='1' step='0.001' value='1'>
             </label>
-            <label>beats
+            <label class=".disabled">beats
                 <input name='music' type='range' min='0' max='1' step='0.001' value='0'>
             </label>
             <label>waves
                 <input name='waves' type='range' min='0' max='1' step='0.001' value='0'>
+            </label>
+            <label>speed
+                <input name='speed' type='range' min='0' max='1' step='0.001' value='0'>
             </label>
         </form>
         <script>
